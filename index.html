@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snacks by Saba | Professional Snacks & Supplies Johannesburg</title>
+    <meta name="description" content="Johannesburg's premier online provider for custom snack hampers, bulk tissue supplies, and event party packs.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f4f7f1',
+                            400: '#a3b892',
+                            500: '#718b5f', // Sage Green
+                            600: '#586d49',
+                            700: '#46563b',
+                            900: '#2d3826',
+                        },
+                        charcoal: {
+                            800: '#1a1a1a',
+                            900: '#111111',
+                            950: '#0a0a0a',
+                        },
+                        cream: {
+                            50: '#F9F7F2',
+                            100: '#f2eee6',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+        /* Theme Foundation */
+        html.dark body { background-color: #111111; color: #ffffff; } 
+        html:not(.dark) body { background-color: #F9F7F2; color: #1a1a1a; }
+
+        /* Background Layer - Fixed Single Image */
+        .page-bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .page-bg-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.9);
+        }
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(249, 247, 242, 0.94), rgba(249, 247, 242, 0.88), rgba(249, 247, 242, 0.96));
+            z-index: 1;
+        }
+        html.dark .video-overlay {
+            background: linear-gradient(to bottom, rgba(17, 17, 17, 0.97), rgba(17, 17, 17, 0.92), rgba(17, 17, 17, 0.98));
+        }
+
+        /* Animations */
+        @keyframes text-glow {
+            0%, 100% { filter: drop-shadow(0 0 2px rgba(113, 139, 95, 0.3)); }
+            50% { filter: drop-shadow(0 0 8px rgba(113, 139, 95, 0.6)); }
+        }
+        .animate-text-glow { animation: text-glow 4s ease-in-out infinite; }
+
+        @keyframes pulse-whatsapp {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+        .whatsapp-pulse { animation: pulse-whatsapp 2s infinite; background-color: #25D366; }
+
+        .text-shimmer {
+            background: linear-gradient(to right, #718b5f 20%, #a3b892 40%, #a3b892 60%, #718b5f 80%);
+            background-size: 200% auto;
+            color: #718b5f;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textShimmer 4s linear infinite;
+        }
+        @keyframes textShimmer { to { background-position: 200% center; } }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(113, 139, 95, 0.15);
+            transition: all 0.4s ease;
+        }
+        html.dark .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(113, 139, 95, 0.4);
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.17, 0.55, 0.55, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .faq-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.5s ease;
+            opacity: 0;
+        }
+        .active-faq .faq-content {
+            max-height: 1000px;
+            opacity: 1;
+            padding-bottom: 1.5rem;
+        }
+
+        #preloader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #F9F7F2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        html.dark #preloader { background: #111111; }
+        #preloader.loaded { opacity: 0; visibility: hidden; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-thumb { background: #718b5f; border-radius: 10px; }
+        .stagger-1 { transition-delay: 100ms; }
+        .stagger-2 { transition-delay: 200ms; }
+    </style>
+</head>
+<body class="overflow-x-hidden" id="home">
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="relative w-24 h-24">
+            <div class="absolute inset-0 border-4 border-brand-500/10 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-t-brand-500 rounded-full animate-spin"></div>
+        </div>
+    </div>
+
+    <!-- Background Layer (Single Professional Image Only) -->
+    <div class="page-bg-container">
+        <img src="https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&q=80&w=2070" alt="Professional Background">
+        <div class="video-overlay"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full z-50 py-4 transition-all duration-700 top-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center px-6 py-4 rounded-full shadow-2xl border border-white/10 backdrop-blur-xl bg-white/80 dark:bg-charcoal-900/90">
+                <div class="flex items-center space-x-4 group cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                    <div class="w-12 h-12 bg-brand-500 rounded-full flex items-center justify-center text-white font-black shadow-lg">SB</div>
+                    <div class="flex flex-col">
+                        <span class="font-black text-lg tracking-tighter uppercase leading-none text-charcoal-900 dark:text-white">SNACKS BY <span class="text-brand-500">SABA</span></span>
+                        <span class="text-[8px] font-bold tracking-[0.4em] uppercase opacity-70 text-charcoal-900 dark:text-white">Professional Delivery Service</span>
+                    </div>
+                </div>
+
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="#home" class="text-[10px] font-black uppercase tracking-widest hover:text-brand-500 transition-colors text-charcoal-900 dark:text-white">Home</a>
+                    <a href="#about" class="text-[10px] font-black uppercase tracking-widest hover:text-brand-500 transition-colors text-charcoal-900 dark:text-white">Company</a>
+                    <a href="#services" class="text-[10px] font-black uppercase tracking-widest hover:text-brand-500 transition-colors text-charcoal-900 dark:text-white">Services</a>
+                    <a href="#order" class="text-[10px] font-black uppercase tracking-widest hover:text-brand-500 transition-colors text-charcoal-900 dark:text-white">Order</a>
+                    
+                    <button id="theme-toggle" class="p-2.5 rounded-full glass-card border-none hover:bg-brand-500/10 transition-all flex items-center justify-center min-w-[45px]">
+                        <i data-lucide="sun" class="hidden dark:block text-brand-500 w-5 h-5"></i>
+                        <i data-lucide="moon" class="block dark:hidden text-charcoal-800 w-5 h-5"></i>
+                    </button>
+
+                    <a href="https://wa.me/27735970500" class="px-8 py-3 bg-brand-500 text-white rounded-full font-bold hover:bg-brand-600 transition-all shadow-lg uppercase text-[10px] tracking-widest">Order Online</a>
+                </div>
+
+                <div class="lg:hidden flex items-center space-x-4">
+                    <button id="theme-toggle-mobile" class="p-2 rounded-full glass-card border-none">
+                        <i data-lucide="sun" class="hidden dark:block text-brand-500"></i>
+                        <i data-lucide="moon" class="block dark:hidden text-charcoal-900"></i>
+                    </button>
+                    <button id="menu-toggle" class="text-charcoal-900 dark:text-white p-2">
+                        <i data-lucide="menu"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden absolute top-24 left-4 right-4 bg-white dark:bg-charcoal-900 border border-white/10 rounded-2xl p-6 shadow-2xl lg:hidden">
+            <div class="flex flex-col space-y-6 text-center">
+                <a href="#home" class="mobile-link text-xs font-black uppercase tracking-widest text-charcoal-900 dark:text-white">Home</a>
+                <a href="#about" class="mobile-link text-xs font-black uppercase tracking-widest text-charcoal-900 dark:text-white">About Us</a>
+                <a href="#services" class="mobile-link text-xs font-black uppercase tracking-widest text-charcoal-900 dark:text-white">Our Services</a>
+                <a href="https://wa.me/27735970500" class="bg-brand-500 text-white py-4 rounded-full font-black uppercase text-xs tracking-widest">WhatsApp Message</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center pt-24 overflow-hidden relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center md:text-left">
+            <div class="max-w-3xl space-y-8 reveal">
+                <div class="inline-flex items-center space-x-2 px-4 py-2 bg-brand-500/10 border border-brand-500/20 rounded-full">
+                    <span class="w-2 h-2 bg-brand-500 rounded-full animate-pulse"></span>
+                    <span class="text-brand-500 text-[10px] font-black uppercase tracking-[0.3em]">🇿🇦 Johannesburg • Retail & Enterprise</span>
+                </div>
+                <h1 class="text-6xl md:text-8xl font-black leading-[0.85] tracking-tighter uppercase text-charcoal-900 dark:text-white">
+                    Quality <br />
+                    <span class="text-shimmer animate-text-glow">Delivered</span> <br />
+                    Daily.
+                </h1>
+                <p class="text-lg md:text-xl font-medium leading-relaxed text-charcoal-800/80 dark:text-slate-300">
+                    Snacks by Saba is a dedicated delivery service providing curated snacks, gift hampers, and essential tissue supplies to homes, schools, and small businesses throughout Johannesburg.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 pt-6">
+                    <a href="https://wa.me/27735970500" class="px-10 py-5 bg-brand-500 text-white font-black rounded-full shadow-2xl hover:scale-105 transition-all flex items-center justify-center uppercase tracking-widest text-xs">
+                        Order on WhatsApp <i data-lucide="message-circle" class="ml-3 w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Company Section -->
+    <section id="about" class="py-32 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="max-w-4xl space-y-12 reveal">
+                <div class="space-y-4">
+                    <h2 class="text-brand-500 font-black uppercase tracking-[0.4em] text-[11px]">The Company</h2>
+                    <h3 class="text-5xl md:text-6xl font-black uppercase tracking-tighter text-charcoal-900 dark:text-white">Excellence In <br /> Distribution.</h3>
+                    <div class="w-24 h-2 bg-brand-500 rounded-full opacity-50"></div>
+                </div>
+                
+                <div class="space-y-8 text-lg md:text-xl font-medium leading-relaxed text-charcoal-800/80 dark:text-slate-300">
+                    <p>
+                        Snacks by Saba is a proudly South African online distribution store based in the heart of Johannesburg. We were founded on the principles of convenience, affordability, and professional presentation. We understand that in a fast-paced environment, having access to high-quality snacks and essential tissue supplies should be simple and stress-free.
+                    </p>
+                    <p>
+                        Our company serves a diverse range of clients, from individual households looking for the perfect treat to educational institutions and small businesses requiring bulk tissue supplies. Every order we fulfill is treated with the utmost care, ensuring that our presentation meets the high standards our customers have come to expect from the Saba brand.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="glass-card p-8 rounded-[2.5rem] border-l-4 border-brand-500">
+                        <h4 class="text-brand-500 font-black text-xs uppercase mb-3 tracking-widest">Reliability</h4>
+                        <p class="text-xs opacity-70">A logistical framework designed for prompt delivery across Johannesburg.</p>
+                    </div>
+                    <div class="glass-card p-8 rounded-[2.5rem] border-l-4 border-brand-600">
+                        <h4 class="text-brand-500 font-black text-xs uppercase mb-3 tracking-widest">Affordability</h4>
+                        <p class="text-xs opacity-70">Competitive pricing on both retail and wholesale product categories.</p>
+                    </div>
+                    <div class="glass-card p-8 rounded-[2.5rem] border-l-4 border-brand-700">
+                        <h4 class="text-brand-500 font-black text-xs uppercase mb-3 tracking-widest">Presentation</h4>
+                        <p class="text-xs opacity-70">Hand-packed orders focused on neatness and gift-ready aesthetics.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-32 relative overflow-hidden bg-brand-900/5 dark:bg-brand-950/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center space-y-4 mb-24 reveal">
+                <h2 class="text-brand-500 font-black tracking-[0.4em] uppercase text-[11px]">Our Services</h2>
+                <h3 class="text-4xl md:text-5xl font-black tracking-tighter uppercase text-charcoal-900 dark:text-white">Core Competencies</h3>
+                <div class="w-24 h-2 bg-brand-500 mx-auto rounded-full mt-4 opacity-50"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <!-- Service 1: Tissue Supply -->
+                <div class="glass-card p-12 rounded-[3.5rem] reveal">
+                    <div class="w-16 h-16 bg-brand-500 rounded-2xl flex items-center justify-center text-white mb-8 shadow-lg">
+                        <i data-lucide="package-check" class="w-8 h-8"></i>
+                    </div>
+                    <h4 class="text-2xl font-black mb-6 uppercase tracking-tighter text-charcoal-900 dark:text-white">Tissue Supply</h4>
+                    <p class="text-sm font-medium opacity-80 leading-relaxed text-charcoal-800 dark:text-slate-200 mb-6">
+                        We provide high-quality tissue and paper products for both retail and commercial use. Our supply chain caters to private households, schools, events, and small corporate offices. We offer flexible ordering for bulk quantities, ensuring your essentials are always in stock.
+                    </p>
+                    <ul class="text-[10px] font-bold uppercase tracking-widest text-brand-600 space-y-2 opacity-80">
+                        <li>• Retail Households</li>
+                        <li>• Educational Institutions</li>
+                        <li>• Corporate Bulk Orders</li>
+                    </ul>
+                </div>
+
+                <!-- Service 2: Snack Hampers -->
+                <div class="glass-card p-12 rounded-[3.5rem] reveal stagger-1">
+                    <div class="w-16 h-16 bg-brand-500 rounded-2xl flex items-center justify-center text-white mb-8 shadow-lg">
+                        <i data-lucide="gift" class="w-8 h-8"></i>
+                    </div>
+                    <h4 class="text-2xl font-black mb-6 uppercase tracking-tighter text-charcoal-900 dark:text-white">Snack Hampers</h4>
+                    <p class="text-sm font-medium opacity-80 leading-relaxed text-charcoal-800 dark:text-slate-200 mb-6">
+                        Our curated snack hampers are designed for impact. Whether it's a corporate appreciation gift, a birthday surprise, or a professional office treat, each hamper is meticulously hand-packed with premium snacks to ensure a beautiful presentation and a delightful experience for the recipient.
+                    </p>
+                    <ul class="text-[10px] font-bold uppercase tracking-widest text-brand-600 space-y-2 opacity-80">
+                        <li>• Corporate Gifting</li>
+                        <li>• Special Occasions</li>
+                        <li>• Customizable Selections</li>
+                    </ul>
+                </div>
+
+                <!-- Service 3: Party Packs -->
+                <div class="glass-card p-12 rounded-[3.5rem] reveal stagger-2">
+                    <div class="w-16 h-16 bg-brand-500 rounded-2xl flex items-center justify-center text-white mb-8 shadow-lg">
+                        <i data-lucide="party-popper" class="w-8 h-8"></i>
+                    </div>
+                    <h4 class="text-2xl font-black mb-6 uppercase tracking-tighter text-charcoal-900 dark:text-white">Party Packs</h4>
+                    <p class="text-sm font-medium opacity-80 leading-relaxed text-charcoal-800 dark:text-slate-200 mb-6">
+                        Make celebrations stress-free with our affordable and convenient party packs. Specifically designed for school events, birthday parties, and community celebrations, these packs provide a professional and uniform solution for group catering that kids and adults alike will love.
+                    </p>
+                    <ul class="text-[10px] font-bold uppercase tracking-widest text-brand-600 space-y-2 opacity-80">
+                        <li>• Birthday Celebrations</li>
+                        <li>• School Event Catering</li>
+                        <li>• Cost-Effective Bundles</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-32 relative reveal">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center space-y-4 mb-24 reveal">
+                <h2 class="text-brand-500 font-black tracking-[0.4em] uppercase text-[11px]">Client Reviews</h2>
+                <h3 class="text-4xl md:text-5xl font-black tracking-tighter uppercase text-charcoal-900 dark:text-white">South African Voices</h3>
+                <div class="w-24 h-2 bg-brand-500 mx-auto rounded-full mt-4 opacity-50"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Review 1 -->
+                <div class="glass-card p-8 rounded-[2rem] border-t-4 border-brand-400 reveal">
+                    <div class="flex text-brand-500 mb-4">
+                        <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                        <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                        <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                        <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                        <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                    </div>
+                    <p class="text-xs italic text-charcoal-800 dark:text-slate-200 mb-6 leading-relaxed">
+                        "Very professional service and the snack hampers were beautifully packed. My kids loved them!"
+                    </p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-brand-500/10 rounded-full flex items-center justify-center text-brand-500 font-bold">TM</div>
+                        <div>
+                            <p class="font-bold text-[10px] dark:text-white">Thandi M.</p>
+                            <p class="text-[8px] uppercase font-bold text-slate-500">Johannesburg</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Review 2 -->
+                <div class="glass-card p-8 rounded-[2rem] border-t-4 border-brand-500 reveal stagger-1">
+                    <div class="flex text-brand-500 mb-4">
+                        <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                        <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                        <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                        <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                        <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                    </div>
+                    <p class="text-xs italic text-charcoal-800 dark:text-slate-200 mb-6 leading-relaxed">
+                        "Quick response on WhatsApp and delivery was smooth. Definitely ordering again."
+                    </p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-brand-500/10 rounded-full flex items-center justify-center text-brand-500 font-bold">SK</div>
+                        <div>
+                            <p class="font-bold text-[10px] dark:text-white">Sibusiso K.</p>
+                            <p class="text-[8px] uppercase font-bold text-slate-500">Soweto</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Review 3 -->
+                <div class="glass-card p-8 rounded-[2rem] border-t-4 border-brand-600 reveal stagger-2">
+                    <div class="flex text-brand-500 mb-4">
+                        <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                        <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                        <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                        <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                        <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                    </div>
+                    <p class="text-xs italic text-charcoal-800 dark:text-slate-200 mb-6 leading-relaxed">
+                        "Affordable party packs and great quality. Snacks by Saba never disappoints."
+                    </p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-brand-500/10 rounded-full flex items-center justify-center text-brand-500 font-bold">NP</div>
+                        <div>
+                            <p class="font-bold text-[10px] dark:text-white">Naledi P.</p>
+                            <p class="text-[8px] uppercase font-bold text-slate-500">Midrand</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Review 4 -->
+                <div class="glass-card p-8 rounded-[2rem] border-t-4 border-brand-700 reveal stagger-3">
+                    <div class="flex text-brand-500 mb-4">
+                        <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                        <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                        <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                        <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                        <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+                    </div>
+                    <p class="text-xs italic text-charcoal-800 dark:text-slate-200 mb-6 leading-relaxed">
+                        "Perfect for school events and gifts. Highly recommend their service."
+                    </p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-brand-500/10 rounded-full flex items-center justify-center text-brand-500 font-bold">ZR</div>
+                        <div>
+                            <p class="font-bold text-[10px] dark:text-white">Zanele R.</p>
+                            <p class="text-[8px] uppercase font-bold text-slate-500">Randburg</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-32 relative bg-brand-500/5 reveal">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6">
+            <div class="text-center space-y-4 mb-16">
+                <h2 class="text-brand-500 font-black tracking-[0.4em] uppercase text-[11px]">Help Center</h2>
+                <h3 class="text-5xl font-black uppercase tracking-tighter text-charcoal-900 dark:text-white text-center">Questions.</h3>
+                <div class="w-24 h-2 bg-brand-500 mx-auto rounded-full mt-4 opacity-50"></div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="glass-card rounded-3xl overflow-hidden faq-item active-faq">
+                    <button class="w-full flex justify-between items-center p-8 text-left hover:bg-brand-500/5 transition-colors faq-btn">
+                        <span class="font-black text-[11px] uppercase tracking-widest text-charcoal-900 dark:text-white">Do you accept phone calls?</span>
+                        <i data-lucide="plus" class="text-brand-500 w-4 h-4 transition-transform icon-toggle"></i>
+                    </button>
+                    <div class="faq-content px-8 text-sm font-medium text-charcoal-800 dark:text-slate-200 border-t border-brand-500/10 pt-4">
+                        No, we accept WhatsApp messages only for faster and more accurate service. This allows us to maintain a precise record of your custom order requirements.
+                    </div>
+                </div>
+                
+                <div class="glass-card rounded-3xl overflow-hidden faq-item">
+                    <button class="w-full flex justify-between items-center p-8 text-left hover:bg-brand-500/5 transition-colors faq-btn">
+                        <span class="font-black text-[11px] uppercase tracking-widest text-charcoal-900 dark:text-white">Where are you located?</span>
+                        <i data-lucide="plus" class="text-brand-500 w-4 h-4 transition-transform icon-toggle"></i>
+                    </button>
+                    <div class="faq-content px-8 text-sm font-medium text-charcoal-800 dark:text-slate-200 border-t border-brand-500/10 pt-4">
+                        We are based in Johannesburg, South Africa, and serve the greater metropolitan area with reliable delivery options.
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-3xl overflow-hidden faq-item">
+                    <button class="w-full flex justify-between items-center p-8 text-left hover:bg-brand-500/5 transition-colors faq-btn">
+                        <span class="font-black text-[11px] uppercase tracking-widest text-charcoal-900 dark:text-white">Do you offer bulk orders?</span>
+                        <i data-lucide="plus" class="text-brand-500 w-4 h-4 transition-transform icon-toggle"></i>
+                    </button>
+                    <div class="faq-content px-8 text-sm font-medium text-charcoal-800 dark:text-slate-200 border-t border-brand-500/10 pt-4">
+                        Yes, we supply both retail and bulk orders. We are the preferred supplier for many local homes, schools, and small businesses.
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-3xl overflow-hidden faq-item">
+                    <button class="w-full flex justify-between items-center p-8 text-left hover:bg-brand-500/5 transition-colors faq-btn">
+                        <span class="font-black text-[11px] uppercase tracking-widest text-charcoal-900 dark:text-white">Can I order party packs for events?</span>
+                        <i data-lucide="plus" class="text-brand-500 w-4 h-4 transition-transform icon-toggle"></i>
+                    </button>
+                    <div class="faq-content px-8 text-sm font-medium text-charcoal-800 dark:text-slate-200 border-t border-brand-500/10 pt-4">
+                        Absolutely. Our party packs are specifically designed for birthdays, school events, and community celebrations. They are fully customizable upon request.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Order Section -->
+    <section id="order" class="py-32 relative reveal">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+            <div class="space-y-12">
+                <h3 class="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8] text-center lg:text-left text-charcoal-900 dark:text-white">
+                    Start <br />
+                    <span class="text-brand-500 text-shimmer animate-text-glow">Order.</span> <br />
+                    Today.
+                </h3>
+                <div class="flex flex-col items-center lg:items-start space-y-8">
+                    <div class="flex items-center space-x-6 group cursor-pointer" onclick="location.href='https://wa.me/27735970500'">
+                        <div class="w-16 h-16 glass-card rounded-full flex items-center justify-center text-brand-500 group-hover:bg-brand-500 group-hover:text-white transition-all shadow-xl">
+                            <i data-lucide="message-circle" class="w-8 h-8"></i>
+                        </div>
+                        <div class="text-left">
+                            <p class="text-[10px] font-black uppercase mb-1 text-slate-500">WhatsApp Dispatch</p>
+                            <p class="text-2xl font-black leading-none text-charcoal-900 dark:text-white">073 597 0500</p>
+                        </div>
+                    </div>
+                    <div class="px-6 py-2 bg-brand-500/5 border border-brand-500/10 rounded-full text-[10px] font-bold uppercase tracking-widest opacity-60">
+                        📍 Serving Johannesburg, South Africa
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card p-12 rounded-[4rem] shadow-2xl reveal stagger-2">
+                <div class="space-y-8 text-center">
+                    <h4 class="text-3xl font-black mb-4 uppercase tracking-tighter text-charcoal-900 dark:text-white">How To Order</h4>
+                    <div class="space-y-6 text-left">
+                        <div class="flex items-start gap-6">
+                            <span class="w-10 h-10 rounded-full bg-brand-500 text-white flex items-center justify-center font-bold flex-shrink-0">1</span>
+                            <div>
+                                <p class="text-[11px] font-bold uppercase tracking-widest dark:text-white">Review Catalogue</p>
+                                <p class="text-xs opacity-60">Browse our service list and identify your quantity needs.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-6">
+                            <span class="w-10 h-10 rounded-full bg-brand-500 text-white flex items-center justify-center font-bold flex-shrink-0">2</span>
+                            <div>
+                                <p class="text-[11px] font-bold uppercase tracking-widest dark:text-white">Message Saba</p>
+                                <p class="text-xs opacity-60">Click the WhatsApp button to send your order details directly.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-6">
+                            <span class="w-10 h-10 rounded-full bg-brand-500 text-white flex items-center justify-center font-bold flex-shrink-0">3</span>
+                            <div>
+                                <p class="text-[11px] font-bold uppercase tracking-widest dark:text-white">Confirmation</p>
+                                <p class="text-xs opacity-60">We confirm stock, delivery timing, and final pricing.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="https://wa.me/27735970500" class="block w-full text-center bg-brand-500 text-white font-black py-6 rounded-full shadow-2xl hover:bg-brand-600 transition-all uppercase tracking-[0.3em] text-[10px] mt-10">
+                        Order Via WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-20 bg-charcoal-950 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center flex flex-col items-center">
+            <div class="w-16 h-16 bg-brand-500 rounded-full flex items-center justify-center text-white font-black mb-6">SB</div>
+            <h4 class="text-xl font-black tracking-tighter uppercase text-white">SNACKS BY SABA</h4>
+            <p class="text-[10px] font-bold tracking-widest text-brand-500/60 mb-4 uppercase">Snacks Delivery • Johannesburg • Tissue Supply</p>
+            <p class="text-[9px] font-medium opacity-40 text-white tracking-[0.5em] mb-12">QUALITY PACKING • RELIABLE DISPATCH</p>
+            <p class="text-[9px] font-medium opacity-30 text-white">© 2024 SNACKS BY SABA. ALL RIGHTS RESERVED. 🇿🇦</p>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/27735970500" target="_blank" class="fixed bottom-8 right-8 z-[100] text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all whatsapp-pulse" id="floating-wa">
+        <svg viewBox="0 0 24 24" width="34" height="34" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.937 3.659 1.43 5.623 1.43h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"></path>
+        </svg>
+    </a>
+
+    <script>
+        // Lucide Icon Init
+        lucide.createIcons();
+
+        // Theme Toggle
+        const themeBtn = document.getElementById('theme-toggle');
+        const themeBtnMob = document.getElementById('theme-toggle-mobile');
+        const toggleTheme = () => {
+            document.documentElement.classList.toggle('dark');
+            lucide.createIcons();
+        };
+        themeBtn.onclick = toggleTheme;
+        themeBtnMob.onclick = toggleTheme;
+
+        // Mobile Menu
+        const menuBtn = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.onclick = () => mobileMenu.classList.toggle('hidden');
+        document.querySelectorAll('.mobile-link').forEach(l => l.onclick = () => mobileMenu.classList.add('hidden'));
+
+        // FAQ logic
+        document.querySelectorAll('.faq-btn').forEach(btn => {
+            btn.onclick = () => {
+                const item = btn.parentElement;
+                const isOpen = item.classList.contains('active-faq');
+                document.querySelectorAll('.faq-item').forEach(f => f.classList.remove('active-faq'));
+                if (!isOpen) item.classList.add('active-faq');
+                lucide.createIcons();
+            };
+        });
+
+        // Scroll Reveal
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { 
+                if (entry.isIntersecting) entry.target.classList.add('active'); 
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Preloader
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('preloader').classList.add('loaded');
+            }, 800);
+        };
+    </script>
+</body>
+</html>
